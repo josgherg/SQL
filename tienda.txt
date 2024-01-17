@@ -1,0 +1,119 @@
+CREATE DATABASE tienda;
+
+USE tienda;
+
+CREATE TABLE usuarios(
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    edad INT, 
+    email VARCHAR(100), 
+    contrasena VARCHAR(16), 
+    rol VARCHAR (7), 
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categoria(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    tipo VARCHAR(10),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE producto(
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    nombre_id INT,
+    precio FLOAT,
+    stock INT, 
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (nombre_id) REFERENCES categoria(id)
+);
+
+CREATE TABLE ventas(
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    producto_id INT,
+    usuario_id INT ,
+    cantidad INT,
+    precio_total FLOAT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES producto(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+INSERT INTO categoria (nombre, tipo) VALUES
+    ('calzado', 'deportivo'),
+    ('ropa femenina', 'blusa'),
+    ('ropa para ninos', 'bluejeans');
+
+INSERT INTO usuarios(nombre, apellido, edad, email, contrasena, rol) VALUES 
+    ('America', 'Palacios', 45, 'americapal10@gmail.com','DDWED12QWDD1sd', 'admin'),
+    ('Silvia', 'Soto', 34, 'silvias@gmail.com','DDWEDsdsdDD1sd', 'usuario'),
+    ('Juan', 'Lander', 44, 'landerj@gmail.com','DaaWED12Q1sd', 'usuario'),
+    ('Andres', 'Sanchez', 24, 'andress@gmail.com' ,'DED12QWxccvD1sd', 'usuario'),
+    ('Luisa', 'gonzalez', 17, 'lg2024@gmail.com','DDsdED12xx.D1sd', 'usuario');
+
+INSERT INTO producto(nombre_id, precio, stock) VALUES 
+    (1, 125.50, 10), -- se actualiza su precio a 0.9% precio actual
+    (1, 135.20, 25),
+    (2, 140.78, 50),
+    (2, 135.77, 5), -- Se actualiza su stock a 0
+    (3, 80.66, 50),
+    (3, 65.77, 7);
+
+INSERT INTO ventas(producto_id, usuario_id, cantidad, Precio_total) VALUES 
+    (2, 3, 3, 405.6),
+    (6, 1, 2, 131.54),
+    (6, 5, 1, 65.77),
+    (3, 2, 2, 281.56),
+    (1, 4, 1, 125.50),
+    (5, 3, 3, 241.98),
+    (4, 1, 1, 135.77), --Eliminado
+    (6, 2, 1, 65.77),
+    (3, 4, 2, 281.56),
+    (1, 2, 3, 376.50);
+
+SELECT nombre, apellido, rol FROM usuarios WHERE rol = 'admin'; 
+
+SELECT nombre_id, stock  FROM producto;
+
+SELECT SUM(precio_total) AS suma_total
+FROM ventas WHERE usuario_id = 1;
+
+SELECT SUM(precio_total) AS suma_total
+FROM ventas WHERE usuario_id = 2;
+
+SELECT SUM(precio_total) AS suma_total
+FROM ventas WHERE usuario_id = 3;
+
+SELECT SUM(precio_total) AS suma_total
+FROM ventas WHERE usuario_id = 4;
+
+SELECT SUM(precio_total) AS suma_total
+FROM ventas WHERE usuario_id = 5;
+
+UPDATE producto 
+    SET precio = precio * 0.9 
+    WHERE precio > 100 AND precio < 130;
+
+SELECT * FROM producto;
+
+UPDATE producto 
+    SET precio = precio * 0.9 
+    WHERE precio > 100 AND precio < 130;
+
+UPDATE producto
+    set stock =0 
+    WHERE STOCK <= 5;
+
+SELECT * FROM producto;
+
+DELETE ventas
+    FROM ventas
+    INNER JOIN producto ON ventas.producto_id = producto.id
+    WHERE producto.stock = 0;
+
+SELECT * FROM ventas;
